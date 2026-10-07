@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Course - Teacher</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <div id="sidebar"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Create New Course</h1>
+        </div>
+
+        <div id="message"></div>
+
+        <div id="createForm">
+            <form id="courseForm">
+                <div class="form-group">
+                    <label for="name">Course Name</label>
+                    <input type="text" id="name" placeholder="e.g. Introduction to Computer Science" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseCode">Course Code</label>
+                    <input type="text" id="courseCode" placeholder="e.g. CS101" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" placeholder="e.g. Computer Science" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="semester">Semester</label>
+                    <input type="text" id="semester" placeholder="e.g. Fall 2026" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="4" placeholder="Course description..."></textarea>
+                </div>
+
+                <button type="submit">Create Course</button>
+            </form>
+        </div>
+
+        <div id="successPanel" style="display:none;">
+            <h2>Course Created Successfully!</h2>
+            <p>Share this enrollment code with your students:</p>
+            <div class="enrollment-code-box">
+                <code id="generatedCode"></code>
+                <button onclick="copyCode()" class="btn-action btn-activate">Copy to Clipboard</button>
+            </div>
+            <a href="teacher-courses.html" class="btn-action">Back to My Courses</a>
+        </div>
+    </div>
+    <script>
+        /* Early route guard — runs before layout.js is fully parsed */
+        (function() {
+            var token = localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
+            if (!token) { window.location.href = "login.html"; return; }
+            try {
+                var p = JSON.parse(atob(token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
+                if (p.exp && Date.now()/1000 > p.exp) {
+                    localStorage.removeItem("jwtToken"); sessionStorage.removeItem("jwtToken");
+                    window.location.href = "login.html?reason=expired";
+                }
+                var role = p.role || "";
+                var allowed = ["TEACHER"];
+                if (allowed.length && allowed.indexOf(role) === -1) {
+                    var map = {ADMIN:"admin-dashboard.html",TEACHER:"teacher-dashboard.html",STUDENT:"student-dashboard.html"};
+                    window.location.href = map[role] || "login.html";
+                }
+            } catch(e) { window.location.href = "login.html"; }
+        })();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/teacher-course-create.js"></script>
+</body>
+</html>

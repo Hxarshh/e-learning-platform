@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learning Platform</title>
+    <meta name="description" content="A role-based university e-learning platform for admins, teachers and students.">
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="public-page">
+    <div class="public-container">
+        <h1>E-Learning Platform</h1>
+        <p class="tagline">Access your courses, live classes, assignments, and learning resources — all in one place.</p>
+
+        <div class="public-actions">
+            <a href="login.html" class="btn-primary" id="landingLoginBtn">Sign In</a>
+            <a href="register.html" class="btn-outline" id="landingSignupBtn">Create Account</a>
+        </div>
+    </div>
+
+    <script>
+        // If already logged in, redirect to their dashboard
+        (function() {
+            var token = localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
+            if (!token) return;
+            try {
+                var payload = JSON.parse(atob(token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
+                if (payload.exp && Date.now()/1000 > payload.exp) {
+                    localStorage.removeItem("jwtToken"); sessionStorage.removeItem("jwtToken"); return;
+                }
+                var map = {ADMIN:"admin-dashboard.html",TEACHER:"teacher-dashboard.html",STUDENT:"student-dashboard.html"};
+                window.location.href = map[payload.role] || "student-dashboard.html";
+            } catch(e) {}
+        })();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+</body>
+</html>

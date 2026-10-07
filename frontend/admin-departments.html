@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Departments</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <div id="sidebar"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Manage Departments</h1>
+        </div>
+
+        <div id="message"></div>
+
+        <!-- Create Form -->
+        <div class="form-box" style="max-width: 400px; margin-bottom: 30px;">
+            <h3>Add New Department</h3>
+            <form id="createForm">
+                <input type="text" id="deptName" placeholder="Department Name" required>
+                <button type="submit">Add Department</button>
+            </form>
+        </div>
+
+        <!-- Departments Table -->
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="departmentsTableBody">
+                <tr><td colspan="3" style="text-align:center;">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        /* Early route guard — runs before layout.js is fully parsed */
+        (function() {
+            var token = localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
+            if (!token) { window.location.href = "login.html"; return; }
+            try {
+                var p = JSON.parse(atob(token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
+                if (p.exp && Date.now()/1000 > p.exp) {
+                    localStorage.removeItem("jwtToken"); sessionStorage.removeItem("jwtToken");
+                    window.location.href = "login.html?reason=expired";
+                }
+                var role = p.role || "";
+                var allowed = ["ADMIN"];
+                if (allowed.length && allowed.indexOf(role) === -1) {
+                    var map = {ADMIN:"admin-dashboard.html",TEACHER:"teacher-dashboard.html",STUDENT:"student-dashboard.html"};
+                    window.location.href = map[role] || "login.html";
+                }
+            } catch(e) { window.location.href = "login.html"; }
+        })();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/admin-departments.js"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Attendance Rules</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <div id="sidebar"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Attendance Rules</h1>
+        </div>
+
+        <div id="message"></div>
+
+        <div class="form-box" style="max-width: 500px;">
+            <h3>Global Default Rule</h3>
+            <form id="ruleForm">
+                <label>Window Minutes (join within X min = Present):</label>
+                <input type="number" id="windowMinutes" value="15" required>
+                <label>Min Duration Minutes (optional):</label>
+                <input type="number" id="minDuration" placeholder="e.g. 30">
+                <label>Late Threshold Minutes (optional):</label>
+                <input type="number" id="lateThreshold" placeholder="e.g. 10">
+                <button type="submit">Save Rule</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        /* Early route guard — runs before layout.js is fully parsed */
+        (function() {
+            var token = localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
+            if (!token) { window.location.href = "login.html"; return; }
+            try {
+                var p = JSON.parse(atob(token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
+                if (p.exp && Date.now()/1000 > p.exp) {
+                    localStorage.removeItem("jwtToken"); sessionStorage.removeItem("jwtToken");
+                    window.location.href = "login.html?reason=expired";
+                }
+                var role = p.role || "";
+                var allowed = ["ADMIN"];
+                if (allowed.length && allowed.indexOf(role) === -1) {
+                    var map = {ADMIN:"admin-dashboard.html",TEACHER:"teacher-dashboard.html",STUDENT:"student-dashboard.html"};
+                    window.location.href = map[role] || "login.html";
+                }
+            } catch(e) { window.location.href = "login.html"; }
+        })();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/admin-attendance-rules.js"></script>
+</body>
+</html>

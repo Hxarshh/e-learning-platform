@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up — E-Learning Platform</title>
+    <meta name="description" content="Create your e-learning account.">
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="public-page">
+    <div class="public-container">
+        <h1>E-Learning Platform</h1>
+        <div class="form-box">
+            <h2>Create Account</h2>
+            <p class="form-subtitle">Sign up to get started as a Student or Teacher</p>
+            <form id="registerForm">
+                <input type="text"     id="name"     placeholder="Full Name"      required autocomplete="name">
+                <input type="email"    id="email"    placeholder="Email Address"  required autocomplete="email">
+                <input type="password" id="password" placeholder="Password"       required autocomplete="new-password">
+                <select id="role" required>
+                    <option value="">Select Your Role</option>
+                    <option value="STUDENT">Student</option>
+                    <option value="TEACHER">Teacher</option>
+                </select>
+                <button type="submit" id="registerBtn">Create Account</button>
+            </form>
+            <p id="message" class="form-message"></p>
+            <div class="form-footer">
+                Already have an account? <a href="login.html">Sign In</a>
+            </div>
+        </div>
+        <div class="back-home"><a href="index.html">&larr; Back to Home</a></div>
+    </div>
+    <script src="js/script.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+</body>
+</html>

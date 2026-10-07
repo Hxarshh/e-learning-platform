@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Assignment - Student</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <div id="sidebar"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Submit Assignment</h1>
+            <a href="student-module-assignments.html" class="btn-action">&larr; Back</a>
+        </div>
+
+        <div id="message"></div>
+
+        <!-- Assignment Details -->
+        <div id="assignmentDetails" class="detail-card" style="margin-bottom: 30px;">
+            <h2 id="assignmentTitle"></h2>
+            <p><strong>Description:</strong> <span id="assignmentDesc"></span></p>
+            <p><strong>Due Date:</strong> <span id="assignmentDue"></span></p>
+            <p><strong>Max Marks:</strong> <span id="assignmentMarks"></span></p>
+        </div>
+
+        <!-- Current Submission Status -->
+        <div id="currentSubmission" style="display:none; margin-bottom: 30px;">
+            <h3>Your Current Submission</h3>
+            <div id="submissionStatus"></div>
+        </div>
+
+        <!-- Submission Form -->
+        <div class="form-box" style="max-width: 600px;">
+            <h3 id="formTitle">Submit Your Work</h3>
+            <form id="submitForm">
+                <div class="form-group">
+                    <label for="textAnswer">Text Answer</label>
+                    <textarea id="textAnswer" rows="5" placeholder="Enter your answer..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="submissionFile">Attach File (optional)</label>
+                    <input type="file" id="submissionFile">
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        /* Early route guard — runs before layout.js is fully parsed */
+        (function() {
+            var token = localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
+            if (!token) { window.location.href = "login.html"; return; }
+            try {
+                var p = JSON.parse(atob(token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
+                if (p.exp && Date.now()/1000 > p.exp) {
+                    localStorage.removeItem("jwtToken"); sessionStorage.removeItem("jwtToken");
+                    window.location.href = "login.html?reason=expired";
+                }
+                var role = p.role || "";
+                var allowed = ["STUDENT"];
+                if (allowed.length && allowed.indexOf(role) === -1) {
+                    var map = {ADMIN:"admin-dashboard.html",TEACHER:"teacher-dashboard.html",STUDENT:"student-dashboard.html"};
+                    window.location.href = map[role] || "login.html";
+                }
+            } catch(e) { window.location.href = "login.html"; }
+        })();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/student-assignment-submit.js"></script>
+</body>
+</html>

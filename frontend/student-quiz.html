@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Quiz — EduPlatform</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <script>if (typeof requireAuth === 'function') requireAuth(['STUDENT']);</script>
+    <div id="navbar"></div>
+    <div id="sidebar"></div>
+
+    <main class="content-wrapper">
+        <div class="page-container" style="max-width: 760px;">
+            <div id="quizContainer">
+                <div class="loading-container"><div class="spinner"></div><span>Loading quiz...</span></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/student-quiz.js"></script>
+</body>
+</html>

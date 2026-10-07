@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Logs — EduPlatform</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <script>if (typeof requireAuth === 'function') requireAuth(['ADMIN']);</script>
+    <div id="navbar"></div>
+    <div id="sidebar"></div>
+
+    <main class="content-wrapper">
+        <div class="page-container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">💳 Financial Transactions & Payments</h1>
+                    <p class="page-subtitle">Track payment stubs, receipts, and enrollment fee transactions</p>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Ref ID</th>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsTableBody">
+                        <tr><td colspan="7" class="loading-container"><div class="spinner"></div><span>Loading transactions...</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="paginationContainer"></div>
+        </div>
+    </main>
+
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="components/pagination.js"></script>
+    <script src="js/layout.js"></script>
+    <script>
+        let currentPage = 0;
+        async function loadPayments(page = 0) {
+            currentPage = page;
+            const tbody = document.getElementById("paymentsTableBody");
+            try {
+                const data = await api.get(`/api/admin/payments?page=${page}&size=10`);
+                const items = data.content || [];
+                if (!items.length) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><div class="empty-state-icon">💳</div><p class="empty-state-title">No transactions found</p></td></tr>';
+                    return;
+                }
+                tbody.innerHTML = items.map(p => `
+                    <tr>
+                        <td><code>${p.providerRef || 'N/A'}</code></td>
+                        <td>${p.student ? p.student.name || p.student.email : 'N/A'}</td>
+                        <td>${p.course ? p.course.name : 'General Fee'}</td>
+                        <td><strong>₹${p.amount}</strong></td>
+                        <td><span class="badge ${p.status === 'COMPLETED' ? 'badge-success' : p.status === 'FAILED' ? 'badge-danger' : 'badge-warning'}">${p.status}</span></td>
+                        <td>${p.createdAt ? new Date(p.createdAt).toLocaleDateString() : ''}</td>
+                        <td>
+                            ${p.status === 'PENDING' ? `<button class="btn btn-success btn-sm" onclick="mockComplete('${p.providerRef}')">Approve</button>` : '—'}
+                        </td>
+                    </tr>
+                `).join("");
+                document.getElementById("paginationContainer").innerHTML = renderPaginationControls(data, "loadPayments");
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-state">${e.message}</td></tr>`;
+            }
+        }
+
+        window.mockComplete = async function(ref) {
+            try {
+                await api.post("/api/payments/webhook", { providerRef: ref, status: "COMPLETED" });
+                showToast("Payment marked as COMPLETED!", "success");
+                loadPayments(currentPage);
+            } catch(e) {
+                showToast("Error approving payment: " + e.message, "error");
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => loadPayments(0));
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Detail - Teacher</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <div id="sidebar"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Course Details</h1>
+            <a href="teacher-courses.html" class="btn-action">&larr; Back to My Courses</a>
+        </div>
+
+        <div id="message"></div>
+
+        <div id="courseDetails">
+            <div class="detail-card">
+                <h2 id="courseName"></h2>
+                <p><strong>Course Code:</strong> <span id="courseCode"></span></p>
+                <p><strong>Department:</strong> <span id="courseDepartment"></span></p>
+                <p><strong>Semester:</strong> <span id="courseSemester"></span></p>
+                <p><strong>Description:</strong> <span id="courseDescription"></span></p>
+                <p><strong>Created:</strong> <span id="courseCreated"></span></p>
+            </div>
+
+            <div class="enrollment-section">
+                <h3>Enrollment Code</h3>
+                <div class="enrollment-code-box">
+                    <code id="enrollmentCode"></code>
+                    <span id="codeStatus" class="status-badge"></span>
+                </div>
+                <div class="button-group">
+                    <button onclick="regenerateCode()" class="btn-action btn-reset">Regenerate Code</button>
+                    <button onclick="toggleCodeStatus()" id="toggleCodeBtn" class="btn-action"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        /* Early route guard — runs before layout.js is fully parsed */
+        (function() {
+            var token = localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
+            if (!token) { window.location.href = "login.html"; return; }
+            try {
+                var p = JSON.parse(atob(token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
+                if (p.exp && Date.now()/1000 > p.exp) {
+                    localStorage.removeItem("jwtToken"); sessionStorage.removeItem("jwtToken");
+                    window.location.href = "login.html?reason=expired";
+                }
+                var role = p.role || "";
+                var allowed = ["TEACHER"];
+                if (allowed.length && allowed.indexOf(role) === -1) {
+                    var map = {ADMIN:"admin-dashboard.html",TEACHER:"teacher-dashboard.html",STUDENT:"student-dashboard.html"};
+                    window.location.href = map[role] || "login.html";
+                }
+            } catch(e) { window.location.href = "login.html"; }
+        })();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/teacher-course-detail.js"></script>
+</body>
+</html>

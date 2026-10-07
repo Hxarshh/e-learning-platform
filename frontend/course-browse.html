@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Courses — EduPlatform</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <div id="sidebar"></div>
+
+    <main class="content-wrapper">
+        <div class="page-container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">🔍 Discover Courses</h1>
+                    <p class="page-subtitle">Explore curriculum across departments, check reviews, and enroll</p>
+                </div>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="card" style="margin-bottom: var(--space-6);">
+                <div class="grid grid-3">
+                    <div class="form-group" style="margin:0;">
+                        <input type="text" id="searchInput" class="input" placeholder="Search by title or course code...">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <input type="text" id="deptInput" class="input" placeholder="Filter by Department...">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <input type="text" id="semInput" class="input" placeholder="Filter by Semester...">
+                    </div>
+                </div>
+            </div>
+
+            <div id="coursesGrid" class="grid grid-3">
+                <div class="loading-container" style="grid-column: 1 / -1;">
+                    <div class="spinner"></div><span>Discovering courses...</span>
+                </div>
+            </div>
+
+            <div id="paginationContainer"></div>
+        </div>
+    </main>
+
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="components/course-card.js"></script>
+    <script src="components/pagination.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/course-browse.js"></script>
+</body>
+</html>
